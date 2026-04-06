@@ -4,6 +4,7 @@ import viVN from 'antd/locale/vi_VN';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import MainLayout from './layouts/MainLayout';
+import LoginPage from './modules/login/LoginPage';
 import DashboardPage from './modules/dashboard/DashboardPage';
 import DanhMucPage from './modules/danh-muc/DanhMucPage';
 import DuDauKyPage from './modules/du-dau-ky/DuDauKyPage';
@@ -35,13 +36,22 @@ const theme = {
   },
 };
 
+function ProtectedRoute({ children }: { children: React.ReactNode }) {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
+  return <>{children}</>;
+}
+
 export default function App() {
   return (
     <QueryClientProvider client={queryClient}>
       <ConfigProvider theme={theme} locale={viVN}>
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={<MainLayout />}>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/" element={<ProtectedRoute><MainLayout /></ProtectedRoute>}>
               <Route index element={<Navigate to="/dashboard" replace />} />
               <Route path="dashboard" element={<DashboardPage />} />
               <Route path="danh-muc/*" element={<DanhMucPage />} />

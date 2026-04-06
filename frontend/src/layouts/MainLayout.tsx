@@ -85,8 +85,14 @@ export default function MainLayout() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  const userStr = localStorage.getItem('user');
+  const user = userStr ? JSON.parse(userStr) : null;
+  const initials = user?.full_name
+    ? user.full_name.split(' ').map((w: string) => w[0]).slice(-2).join('').toUpperCase()
+    : 'U';
+
   const userMenu: MenuProps['items'] = [
-    { key: 'profile', icon: <UserOutlined />, label: 'Thông tin cá nhân' },
+    { key: 'profile', icon: <UserOutlined />, label: user?.full_name || 'Người dùng' },
     { key: 'settings', icon: <SettingOutlined />, label: 'Cài đặt' },
     { type: 'divider' },
     {
@@ -96,6 +102,7 @@ export default function MainLayout() {
       danger: true,
       onClick: () => {
         localStorage.removeItem('token');
+        localStorage.removeItem('user');
         navigate('/login');
       },
     },
@@ -200,7 +207,7 @@ export default function MainLayout() {
               style={{ background: 'linear-gradient(135deg, #1565C0, #42A5F5)', cursor: 'pointer' }}
               size={32}
             >
-              TB
+              {initials}
             </Avatar>
           </Dropdown>
         </Header>
